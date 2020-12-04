@@ -1,5 +1,8 @@
 import re
+#import time
+#from datetime import timedelta
 
+#start_time = time.time()
 file = "data/input4.txt"
 
 def prepare_pps(filename):
@@ -59,11 +62,7 @@ def ecl_validator(ecl):
 
 def pid_validator(pid):
     if len(pid) == 9:
-        try: 
-            pid = int(pid)
-            return True
-        except ValueError:
-            pass
+        return re.match("\d{9}", pid)
 
 def pp_validator(filename):
     valid_pps = 0
@@ -80,3 +79,5 @@ def pp_validator(filename):
 
 #Challenge 2: Given passport info, return how many contain all necessary fields and have all fields correctly formatted
 pp_validator(file)
+
+#print(timedelta(seconds=time.time() - start_time))
