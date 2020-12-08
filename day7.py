@@ -19,7 +19,7 @@ def bag_ruler(filename):
             elif contains == "no other bags":
                 contains = [(0, "None")]
             elif len(contains.split(" ")) == 4: #if there's only one bag (4 words, sanity check)
-                contains = [(int(item.split(" ")[0]), contains.split(" ")[1] + " "  + contains.split(" ")[2])]
+                contains = [(int(contains.split(" ")[0]), contains.split(" ")[1] + " "  + contains.split(" ")[2])]
             all_rules[main_bag] = contains
         return all_rules #returns dict of exterior bag to all bags that could be inside
 
@@ -57,7 +57,7 @@ print("Part One: " + str(bag_finder(file, "shiny gold")) + " bags contain a shin
 
 def bag_counter(input, bag_type):
     all_rules = bag_ruler(input) #returns dict of all bags and what can be inside them
-    total_bags = {bag_type: 0} 
+    total_bags = {} 
     this_round = [bag_type]
     next_round = []
 
