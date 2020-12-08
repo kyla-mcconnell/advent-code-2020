@@ -14,14 +14,15 @@ def bag_ruler(filename):
                 inner_bags = [x for x in contains.split(", ")]
                 contains = []
                 for item in inner_bags:
-                    bag = item.split(" ")[1] + " " + item.split(" ")[2]
+                    bag = (int(item.split(" ")[0]), item.split(" ")[1] + " " + item.split(" ")[2])
                     contains.append(bag)
             elif contains == "no other bags":
-                contains = ["None"]
-            else: #if there's only one bag
-                contains = [contains.split(" ")[1] + " "  + contains.split(" ")[2]]
+                contains = [(0, "None")]
+            elif len(contains.split(" ")) == 4: #if there's only one bag (4 words, sanity check)
+                contains = [(int(item.split(" ")[0]), contains.split(" ")[1] + " "  + contains.split(" ")[2])]
             all_rules[main_bag] = contains
         return all_rules #returns dict of exterior bag to all bags that could be inside
+
 
 def bag_finder(input, bag_type):
     all_rules = bag_ruler(input) #returns dict of all bags and what can be inside them
@@ -33,15 +34,52 @@ def bag_finder(input, bag_type):
         old_set = interior_bags
         for bag in interior_bags:
             for key, values in all_rules.items():
-                if bag in values:
-                    interior_bags.append(key) #adds any bag that can contain any of the interior bags
+                for value in values:
+                    try: 
+                        if bag == value[1]:
+                            interior_bags.append(key) #adds any bag that can contain any of the interior bags
+                    except TypeError:
+                        pass
      
     for bag in interior_bags: #once all interior bags have been collected, check which bags can contain any of these
         for key, values in all_rules.items():
-            if bag in values:
-                exterior_bags.append(key)
+             for value in values:
+                try:
+                    if bag == value[1]:
+                        exterior_bags.append(key)
+                except TypeError:
+                        pass
 
     return len(set(exterior_bags))
 
-print(bag_finder(file, "shiny gold"))
+print("Part One: " + str(bag_finder(file, "shiny gold")) + " bags contain a shiny gold bag.")
+
+
+def bag_counter(input, bag_type):
+    all_rules = bag_ruler(input) #returns dict of all bags and what can be inside them
+    total_bags = {bag_type: 0} 
+    this_round = [bag_type]
+    next_round = []
+
+    while this_round != []:
+        for bag_outside in this_round:
+            for value in all_rules[bag_outside]:
+                bag_inside = value[1]
+                number = value[0]
+                for x in range(0, number):
+                    next_round.append(bag_inside)
+                
+                if bag_inside in total_bags:
+                    total_bags[bag_inside] = total_bags[bag_inside] + number
+                else:
+                    total_bags[bag_inside] = number
+        
+        this_round = [x for x in next_round if x != "None"]
+        next_round = []
+    
+    return(sum(total_bags.values()))
+    
+    
+
+print("Part Two: One shiny gold bag contains " + str(bag_counter(file, "shiny gold")) + " other bags.")
 
